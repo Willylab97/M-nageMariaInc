@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ménage Maria inc — Demande de soumission</title>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap');
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --teal:#1B6B63; --teal-mid:#2C9089; --teal-lt:#5FBDB3; --sage:#A8D5CE;
+  --peach:#F2A65A; --peach-lt:#F7C088; --cream:#F4F9F7; --white:#FFFFFF;
+  --gray:#6B7B78; --gray-lt:#DCEAE6; --green:#059669; --shadow:0 16px 48px rgba(27,107,99,0.16);
+}
+html, body { height: 100%; font-family: 'Quicksand', sans-serif; background: var(--cream); }
+.app-nav { background: var(--teal); display: flex; align-items: center; padding: 0 24px; height: 58px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 16px rgba(0,0,0,.18); }
+.nav-brand { font-family: 'Caveat', cursive; font-size: 24px; font-weight: 700; color: var(--white); margin-right: auto; letter-spacing: .5px; }
+.nav-tabs { display: flex; gap: 2px; }
+.nav-tab { padding: 8px 18px; font-size: 12.5px; font-weight: 600; color: rgba(255,255,255,.55); cursor: pointer; border-radius: 8px; transition: all .18s; border: none; background: none; font-family: 'Quicksand', sans-serif; }
+.nav-tab:hover { color: rgba(255,255,255,.9); background: rgba(255,255,255,.08); }
+.nav-tab.active { color: var(--white); background: rgba(242,166,90,.25); }
+.page { display: none; } .page.active { display: block; }
+.chatbot-page { min-height: calc(100vh - 58px); background: linear-gradient(160deg, #1B6B63 0%, #2C9089 55%, #1B6B63 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 16px; gap: 26px; position: relative; overflow: hidden; }
+.chatbot-page::before { content: ''; position: absolute; top: -80px; right: -80px; width: 280px; height: 280px; background: radial-gradient(circle, rgba(242,166,90,.18), transparent 70%); border-radius: 50%; }
+.hero { text-align: center; color: var(--white); max-width: 500px; position: relative; }
+.hero .sparkle { font-size: 30px; margin-bottom: 8px; }
+.hero .tag { display: inline-block; background: var(--peach); color: var(--white); font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; margin-bottom: 14px; }
+.hero h1 { font-family: 'Caveat', cursive; font-size: 42px; font-weight: 700; line-height: 1.1; margin-bottom: 10px; }
+.hero p { font-size: 13.5px; color: rgba(255,255,255,.7); line-height: 1.6; }
+.widget { width: 100%; max-width: 425px; background: var(--white); border-radius: 24px; overflow: hidden; box-shadow: var(--shadow), 0 0 0 1px rgba(255,255,255,.1); display: flex; flex-direction: column; height: 600px; position: relative; }
+.w-header { background: var(--teal); padding: 16px 20px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.w-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--peach), var(--peach-lt)); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.w-info h3 { font-family: 'Caveat', cursive; font-size: 21px; font-weight: 700; color: var(--white); line-height: 1; }
+.w-info p { font-size: 11px; color: rgba(255,255,255,.6); margin-top: 2px; }
+.w-online { margin-left: auto; display: flex; align-items: center; gap: 5px; font-size: 10.5px; color: #86EFAC; }
+.w-dot { width: 7px; height: 7px; background: #86EFAC; border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.35} }
+.prog-track { height: 3px; background: rgba(255,255,255,.12); flex-shrink: 0; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, var(--peach), var(--peach-lt)); transition: width .5s ease; width: 0%; }
+.chat-body { flex: 1; overflow-y: auto; padding: 18px 14px 10px; display: flex; flex-direction: column; gap: 12px; background: var(--cream); scroll-behavior: smooth; }
+.chat-body::-webkit-scrollbar { width: 3px; } .chat-body::-webkit-scrollbar-thumb { background: var(--gray-lt); border-radius: 3px; }
+.msg { display: flex; gap: 8px; align-items: flex-end; }
+.msg.bot { justify-content: flex-start; } .msg.usr { justify-content: flex-end; }
+.msg-av { width: 26px; height: 26px; border-radius: 50%; background: var(--teal); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+.bubble { max-width: 80%; padding: 9px 13px; border-radius: 16px; font-size: 13px; line-height: 1.55; animation: popIn .22s ease; }
+@keyframes popIn { from{opacity:0;transform:scale(.9) translateY(4px)} to{opacity:1;transform:none} }
+.msg.bot .bubble { background: var(--white); color: #1F2937; border-bottom-left-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+.msg.usr .bubble { background: var(--teal); color: var(--white); border-bottom-right-radius: 4px; }
+.opts { display: flex; flex-direction: column; gap: 7px; padding: 0 14px 4px 48px; animation: popIn .28s ease; }
+.opt { background: var(--white); border: 1.5px solid var(--gray-lt); border-radius: 12px; padding: 9px 13px; font-size: 12px; font-family: 'Quicksand', sans-serif; color: var(--teal); cursor: pointer; text-align: left; transition: all .15s; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.opt:hover { border-color: var(--peach); background: #FFF7EE; color: var(--peach); }
+.opt:disabled { opacity: .35; cursor: not-allowed; }
+.opt .oi { font-size: 15px; flex-shrink: 0; }
+.typing-wrap { display: flex; gap: 5px; padding: 8px 12px; }
+.typing-wrap span { width: 6px; height: 6px; border-radius: 50%; background: #9CA3AF; animation: bob 1.1s infinite; }
+.typing-wrap span:nth-child(2){animation-delay:.15s} .typing-wrap span:nth-child(3){animation-delay:.3s}
+@keyframes bob{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+.chat-input-row { padding: 10px 12px; background: var(--white); border-top: 1px solid var(--gray-lt); display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+#chatInput { flex: 1; border: 1.5px solid var(--gray-lt); border-radius: 12px; padding: 8px 12px; font-size: 13px; font-family: 'Quicksand', sans-serif; outline: none; color: #1F2937; background: var(--cream); transition: border-color .2s; }
+#chatInput:focus { border-color: var(--teal); background: var(--white); }
+#chatInput::placeholder { color: #9CA3AF; }
+#chatSend { width: 36px; height: 36px; border-radius: 11px; background: var(--teal); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .18s, transform .12s; }
+#chatSend:hover { background: var(--peach); transform: scale(1.05); }
+#chatSend svg { width: 15px; height: 15px; fill: var(--white); }
+.chat-footer { text-align: center; font-size: 10px; color: var(--gray); padding: 6px 12px 10px; background: var(--white); flex-shrink: 0; }
+.sum-card { background: var(--teal); border-radius: 14px; padding: 14px; color: var(--white); font-size: 12px; line-height: 1.7; margin: 0 14px 2px 48px; animation: popIn .32s ease; }
+.sum-card h4 { font-size: 13px; color: var(--peach-lt); margin-bottom: 7px; font-weight: 700; }
+.sum-row { display: flex; gap: 6px; }
+.sum-lbl { color: var(--peach-lt); min-width: 95px; font-weight: 600; }
+.notif-row { display: flex; gap: 7px; padding: 3px 14px 2px 48px; flex-wrap: wrap; animation: popIn .3s ease; }
+.badge { font-size: 10.5px; border-radius: 20px; padding: 3px 9px; font-weight: 600; }
+.badge.pending { background:#FEF3C7; color:#92400E; } .badge.ok { background:#D1FAE5; color:#065F46; } .badge.err { background:#FEE2E2; color:#991B1B; }
+.cta-chat { display: block; margin: 8px 14px 4px 48px; background: var(--peach); color: var(--white); border: none; border-radius: 12px; padding: 11px 16px; font-size: 13px; font-weight: 700; font-family: 'Quicksand', sans-serif; cursor: pointer; text-align: center; transition: opacity .18s, transform .12s; animation: popIn .3s ease; }
+.cta-chat:hover { opacity: .88; transform: translateY(-1px); }
+.dash-page { max-width: 1100px; margin: 0 auto; padding: 32px 20px 60px; }
+.dash-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+.dash-topbar h2 { font-family: 'Caveat', cursive; font-size: 34px; font-weight: 700; color: var(--teal); }
+.dash-topbar p { font-size: 13px; color: var(--gray); margin-top: 2px; }
+.btn-clear { padding: 8px 16px; background: none; border: 1.5px solid var(--gray-lt); border-radius: 9px; font-size: 12.5px; font-family: 'Quicksand', sans-serif; color: var(--gray); cursor: pointer; transition: all .15s; font-weight: 600; }
+.btn-clear:hover { border-color: #DC2626; color: #DC2626; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px,1fr)); gap: 14px; margin-bottom: 28px; }
+.stat-card { background: var(--white); border-radius: 16px; padding: 18px 20px; box-shadow: 0 2px 12px rgba(0,0,0,.05); border: 1px solid var(--gray-lt); }
+.stat-val { font-family: 'Caveat', cursive; font-size: 40px; font-weight: 700; color: var(--teal); line-height: 1; }
+.stat-val.accent { color: var(--peach); }
+.stat-lbl { font-size: 11.5px; color: var(--gray); margin-top: 4px; font-weight: 600; }
+.config-panel { background: var(--white); border-radius: 18px; padding: 22px 24px; margin-bottom: 24px; border: 1px solid var(--gray-lt); box-shadow: 0 2px 12px rgba(0,0,0,.04); }
+.config-panel h3 { font-family: 'Caveat', cursive; font-size: 24px; color: var(--teal); margin-bottom: 16px; }
+.config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 12px; }
+.field label { display: block; font-size: 10.5px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--gray); margin-bottom: 5px; }
+.field input { width: 100%; border: 1.5px solid var(--gray-lt); border-radius: 10px; padding: 8px 11px; font-size: 12.5px; font-family: 'Quicksand', sans-serif; color: var(--teal); outline: none; transition: border-color .18s; background: var(--cream); }
+.field input:focus { border-color: var(--teal); background: var(--white); }
+.field.full { grid-column: 1/-1; }
+.save-btn { margin-top: 16px; padding: 9px 22px; background: var(--teal); color: var(--white); border: none; border-radius: 10px; font-size: 13px; font-weight: 700; font-family: 'Quicksand', sans-serif; cursor: pointer; transition: background .18s; }
+.save-btn:hover { background: var(--peach); }
+.save-confirm { display: inline-block; margin-left: 10px; font-size: 12px; color: var(--green); opacity: 0; transition: opacity .3s; font-weight: 600; }
+.leads-panel { background: var(--white); border-radius: 18px; overflow: hidden; border: 1px solid var(--gray-lt); box-shadow: 0 2px 12px rgba(0,0,0,.04); }
+.leads-header { padding: 18px 24px; border-bottom: 1px solid var(--gray-lt); display: flex; align-items: center; justify-content: space-between; }
+.leads-header h3 { font-family: 'Caveat', cursive; font-size: 24px; color: var(--teal); }
+.leads-count { font-size: 11.5px; background: var(--sage); color: var(--teal); border-radius: 20px; padding: 3px 10px; font-weight: 700; }
+.lead-entry { padding: 16px 24px; border-bottom: 1px solid #EEF5F2; }
+.lead-entry:last-child { border-bottom: none; }
+.lead-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px; }
+.lead-name { font-weight: 700; color: var(--teal); font-size: 15px; }
+.lead-serv { display: inline-block; background: var(--sage); color: var(--teal); border-radius: 6px; padding: 2px 9px; font-size: 11px; font-weight: 700; }
+.lead-detail { font-size: 12.5px; color: #374151; line-height: 1.7; }
+.lead-detail b { color: var(--teal); font-weight: 600; }
+.lead-ts { font-size: 10.5px; color: #9CA3AF; margin-top: 6px; }
+.empty-state { padding: 52px 24px; text-align: center; color: var(--gray); }
+.empty-state .ei { font-size: 42px; margin-bottom: 10px; }
+.empty-state p { font-size: 14px; font-weight: 600; }
+.empty-state small { font-size: 12px; color: #9CA3AF; }
+.instructions { background: var(--teal); border-radius: 18px; padding: 22px 24px; margin-top: 24px; color: rgba(255,255,255,.85); }
+.instructions h3 { font-family: 'Caveat', cursive; font-size: 24px; color: var(--peach-lt); margin-bottom: 14px; }
+.step-list { display: flex; flex-direction: column; gap: 10px; }
+.step-item { display: flex; gap: 12px; align-items: flex-start; font-size: 12.5px; line-height: 1.6; }
+.step-num { width: 22px; height: 22px; border-radius: 50%; background: var(--peach); color: var(--white); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+.step-item a { color: var(--peach-lt); }
+@media(max-width:600px){ .hero h1{font-size:32px} .dash-page{padding:16px 12px 40px} }
+</style>
+</head>
+<body>
+<nav class="app-nav">
+  <div class="nav-brand">Ménage Maria inc.</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('chatbot',event)">💬 Assistant</button>
+    <button class="nav-tab" onclick="showPage('dashboard',event)">📊 Mes demandes</button>
+  </div>
+</nav>
+
+<div id="page-chatbot" class="page active">
+  <div class="chatbot-page">
+    <div class="hero">
+      <div class="sparkle">✨</div>
+      <div class="tag">Drummondville et les alentours</div>
+      <h1>Votre demande de soumission en quelques clics</h1>
+      <p>Répondez à quelques questions et notre agente aux soumissions vous contactera dans les plus brefs délais.</p>
+    </div>
+    <div class="widget">
+      <div class="w-header">
+        <div class="w-avatar">🧹</div>
+        <div class="w-info"><h3>Ménage Maria inc.</h3><p>Venez vivre « l'expérience Ménage Maria »</p></div>
+        <div class="w-online"><div class="w-dot"></div>En ligne</div>
+      </div>
+      <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+      <div class="chat-body" id="chatBody"></div>
+      <div class="chat-input-row">
+        <input type="text" id="chatInput" placeholder="Choisissez une option ci-dessus…" disabled />
+        <button id="chatSend"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
+      </div>
+      <div class="chat-footer">🔒 Vos informations restent confidentielles · Ménage Maria inc. © 2025</div>
+    </div>
+  </div>
+</div>
+
+<div id="page-dashboard" class="page">
+  <div class="dash-page">
+    <div class="dash-topbar">
+      <div><h2>Mes demandes de soumission</h2><p>Tous les clients qui ont rempli le formulaire</p></div>
+      <button class="btn-clear" onclick="clearLeads()">🗑 Effacer les demandes</button>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-val" id="sTotal">0</div><div class="stat-lbl">Demandes total</div></div>
+      <div class="stat-card"><div class="stat-val accent" id="sResid">0</div><div class="stat-lbl">Résidentiel</div></div>
+      <div class="stat-card"><div class="stat-val" id="sComm">0</div><div class="stat-lbl">Commercial</div></div>
+      <div class="stat-card"><div class="stat-val accent" id="sGrand">0</div><div class="stat-lbl">Grands ménages</div></div>
+    </div>
+    <div class="config-panel">
+      <h3>⚙️ Configuration des notifications</h3>
+      <div class="config-grid">
+        <div class="field"><label>EmailJS – Public Key</label><input type="text" id="cfgEK" placeholder="user_AbCdEfG…"/></div>
+        <div class="field"><label>EmailJS – Service ID</label><input type="text" id="cfgSI" placeholder="service_xxxxx"/></div>
+        <div class="field"><label>EmailJS – Template ID</label><input type="text" id="cfgTI" placeholder="template_xxxxx"/></div>
+        <div class="field full"><label>Make.com – Webhook URL (SMS)</label><input type="text" id="cfgWH" placeholder="https://hook.make.com/…"/></div>
+      </div>
+      <button class="save-btn" onclick="saveConfig()">Sauvegarder</button>
+      <span class="save-confirm" id="saveConfirm">✓ Sauvegardé !</span>
+    </div>
+    <div class="leads-panel">
+      <div class="leads-header"><h3>Demandes reçues</h3><span class="leads-count" id="leadsCount">0 demande</span></div>
+      <div id="leadsBody">
+        <div class="empty-state"><div class="ei">🧹</div><p>Aucune demande pour l'instant.</p><small>Les clients qui complètent le formulaire apparaissent ici automatiquement.</small></div>
+      </div>
+    </div>
+    <div class="instructions">
+      <h3>🚀 Mise en service en 3 étapes</h3>
+      <div class="step-list">
+        <div class="step-item"><div class="step-num">1</div><div><strong style="color:#fff">EmailJS</strong> — Compte gratuit sur <a href="https://emailjs.com" target="_blank">emailjs.com</a>, ajoutez votre courriel, créez un template, collez vos clés.</div></div>
+        <div class="step-item"><div class="step-num">2</div><div><strong style="color:#fff">Make.com SMS</strong> — Scénario avec Webhooks → Twilio, copiez l'URL ci-dessus.</div></div>
+        <div class="step-item"><div class="step-num">3</div><div><strong style="color:#fff">Intégration Wix</strong> — Ajoutez l'élément « Embed HTML » sur votre site et collez le lien.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let leads = JSON.parse(localStorage.getItem('mm_leads') || '[]');
+let cfg   = JSON.parse(localStorage.getItem('mm_cfg')   || '{}');
+function saveConfig(){ cfg={emailKey:document.getElementById('cfgEK').value.trim(),serviceId:document.getElementById('cfgSI').value.trim(),templateId:document.getElementById('cfgTI').value.trim(),webhook:document.getElementById('cfgWH').value.trim()}; localStorage.setItem('mm_cfg',JSON.stringify(cfg)); const c=document.getElementById('saveConfirm'); c.style.opacity='1'; setTimeout(()=>c.style.opacity='0',2000); }
+function loadConfig(){ if(cfg.emailKey)document.getElementById('cfgEK').value=cfg.emailKey; if(cfg.serviceId)document.getElementById('cfgSI').value=cfg.serviceId; if(cfg.templateId)document.getElementById('cfgTI').value=cfg.templateId; if(cfg.webhook)document.getElementById('cfgWH').value=cfg.webhook; }
+function saveLead(d){ d.ts=new Date().toISOString(); leads.unshift(d); localStorage.setItem('mm_leads',JSON.stringify(leads)); renderDash(); }
+function clearLeads(){ if(!confirm('Effacer toutes les demandes ?'))return; leads=[]; localStorage.setItem('mm_leads','[]'); renderDash(); }
+function esc(s){ return String(s||'—').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function renderDash(){
+  document.getElementById('sTotal').textContent=leads.length;
+  document.getElementById('sResid').textContent=leads.filter(l=>l.service&&l.service.includes('résidentiel')&&!l.service.includes('Grand')).length;
+  document.getElementById('sComm').textContent=leads.filter(l=>l.service&&l.service.includes('commercial')&&!l.service.includes('Grand')).length;
+  document.getElementById('sGrand').textContent=leads.filter(l=>l.service&&l.service.includes('Grand')).length;
+  const n=leads.length;
+  document.getElementById('leadsCount').textContent=n+(n===1?' demande':' demandes');
+  if(!n){ document.getElementById('leadsBody').innerHTML=`<div class="empty-state"><div class="ei">🧹</div><p>Aucune demande pour l'instant.</p><small>Les clients qui complètent le formulaire apparaissent ici automatiquement.</small></div>`; return; }
+  document.getElementById('leadsBody').innerHTML = leads.map(l=>{
+    const ts=new Date(l.ts); const d=ts.toLocaleDateString('fr-CA')+' '+ts.toLocaleTimeString('fr-CA',{hour:'2-digit',minute:'2-digit'});
+    let rows='';
+    const fields=[
+      ['Type',l.option],['Espace',l.espace],['Fréquence',l.frequence],['Quand',l.moment],
+      ['Secteur',l.secteur],['Tâches',l.taches],['Extérieur',l.exterieur],
+      ['Entreprise',l.entreprise],['Responsable',l.responsable],['Adresse',l.adresse],
+      ['Projet',l.projet],['Courriel',l.courriel]
+    ];
+    fields.forEach(([k,v])=>{ if(v) rows+=`<div><b>${k} :</b> ${esc(v)}</div>`; });
+    return `<div class="lead-entry">
+      <div class="lead-top"><span class="lead-name">${esc(l.prenom)}</span><span class="lead-serv">${esc(l.service)}</span></div>
+      <div class="lead-detail"><div><b>Téléphone :</b> ${esc(l.telephone)}</div>${rows}</div>
+      <div class="lead-ts">${d}</div>
+    </div>`;
+  }).join('');
+}
+async function sendEmail(d){
+  if(!cfg.emailKey||!cfg.serviceId||!cfg.templateId)return Promise.reject('x');
+  emailjs.init(cfg.emailKey);
+  return emailjs.send(cfg.serviceId,cfg.templateId,{ to_email:'menagemaria@…', to_name:'Ménage Maria inc.', from_name:d.prenom, telephone:d.telephone, service:d.service, details:JSON.stringify(d), date_heure:new Date().toLocaleString('fr-CA',{timeZone:'America/Toronto'}) });
+}
+async function sendSMS(d){
+  if(!cfg.webhook)return Promise.reject('x');
+  let extra=Object.entries(d).filter(([k,v])=>v&&!['ts','service','prenom','telephone'].includes(k)).map(([k,v])=>`${k}: ${v}`).join('\n');
+  return fetch(cfg.webhook,{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ message:`🧹 NOUVELLE DEMANDE – MÉNAGE MARIA\nService : ${d.service}\nNom : ${d.prenom}\nTél : ${d.telephone}\n${extra}`, to:'+14182627166' }) });
+}
+
+// ── SERVICES & FLOWS ──
+const SECTEURS = [
+  {t:"Drummondville",i:"🏙"},
+  {t:"Village proche (St-Germain, St-Cyrille-de-Wendover, St-Charles)",i:"🏡"},
+  {t:"Village à proximité (Notre-Dame-du-Bon-Conseil, Acton Vale…)",i:"🌳"},
+  {t:"Plus loin (Montréal, Victoriaville, Sherbrooke, Granby, Trois-Rivières…)",i:"🚗"},
+  {t:"Lieu éloigné (préciser)",i:"📍",free:true}
+];
+const ESPACES = [
+  {t:"Petit — appartement 2½, 3½ (1-3 pièces)",i:"🏠"},
+  {t:"Moyen — 4½, 5½, petite maison (4-6 pièces)",i:"🏡"},
+  {t:"Grand — 6½, maison moyenne (7+ pièces)",i:"🏘"},
+  {t:"Très grand — grande maison, 8½ et +",i:"🏰"}
+];
+
+const flowStart = [
+  { key:null, bot:"Bonjour ! 👋 Bienvenue chez **Ménage Maria inc.** ✨\n\nJe vais vous aider à remplir votre **demande de soumission gratuite**. Quel service vous intéresse ?", opts:[
+    {t:"🏠 Entretien ménager résidentiel/locatif",i:"",v:"Entretien ménager régulier ou spontané résidentiel et/ou locatif"},
+    {t:"🏢 Entretien ménager commercial",i:"",v:"Entretien ménager régulier et/ou spontané commercial"},
+    {t:"✨ Grand ménage",i:"",v:"Grand ménage résidentiel, locatif et/ou commercial"},
+    {t:"📦 Désencombrement / Organisation",i:"",v:"Désencombrement / Organisation"},
+    {t:"🔨 Après-construction",i:"",v:"Après-construction"},
+    {t:"🤝 Courtage",i:"",v:"Courtage"},
+    {t:"🪟 Nettoyage de vitres",i:"",v:"Nettoyage de vitres"},
+    {t:"🌿 Extérieur",i:"",v:"Extérieur"}
+  ], key2:'service' }
+];
+
+// Parcours 1 — RÉSIDENTIEL
+const flowResidentiel = [
+  { key:null, bot:"Parfait ! Pour remplir votre demande de soumission, nous allons recueillir quelques informations afin de vous rappeler. 😊", opts:[{t:"Continuer →",i:""}] },
+  { key:'espace', bot:"Quel est l'espace à nettoyer ?", opts:ESPACES },
+  { key:'secteur', bot:"Dans quel secteur êtes-vous situé ?", opts:SECTEURS },
+  { key:'adresse', bot:"Quelle est votre **adresse complète** à la maison ?", opts:null, free:true },
+  { key:'prenom', bot:"Quel est votre **prénom et nom complet** ?", opts:null, free:true },
+  { key:'telephone', bot:"Quel est votre **numéro de téléphone** ?", opts:null, free:true },
+  { key:'courriel', bot:"Et votre **adresse courriel** ?", opts:null, free:true }
+];
+
+// Parcours 2 — COMMERCIAL
+const flowCommercial = [
+  { key:null, bot:"Parfait ! Recueillons les informations de votre entreprise pour votre demande de soumission. 😊", opts:[{t:"Continuer →",i:""}] },
+  { key:'espace', bot:"Quel type d'espace à nettoyer ?", opts:[
+    {t:"Restaurant",i:"🍽"},{t:"Boutique",i:"🛍"},{t:"Salon de coiffure",i:"💇"},{t:"Animalerie",i:"🐾"},{t:"Usine",i:"🏭"},{t:"Autre (préciser)",i:"✏️",free:true}
+  ] },
+  { key:'entreprise', bot:"Quel est le **nom de l'entreprise** ?", opts:null, free:true },
+  { key:'responsable', bot:"Quel est le **nom du responsable** de la demande de soumission ?", opts:null, free:true },
+  { key:'adresse', bot:"Quelle est l'**adresse du lieu à nettoyer** ?", opts:null, free:true },
+  { key:'projet', bot:"Décrivez votre **projet en quelques phrases** :", opts:null, free:true },
+  { key:'telephone', bot:"Quel est votre **numéro de téléphone** ?", opts:null, free:true },
+  { key:'courriel', bot:"Et votre **adresse courriel** ?", opts:null, free:true }
+];
+
+// Parcours 3 — GRAND MÉNAGE
+const flowGrand = [
+  { key:'option', bot:"Parfait ! S'agit-il d'un grand ménage :", opts:[
+    {t:"Résidentiel",i:"🏠"},{t:"Commercial",i:"🏢"},{t:"Locatif",i:"🔑"}
+  ] },
+  { key:'espace', bot:"Quelle est la grandeur de l'espace ?", opts:[
+    {t:"Petit — 2½, 3½ (1-3 pièces)",i:"🏠"},
+    {t:"Moyen — 4½, 5½, petite maison (4-6 pièces)",i:"🏡"},
+    {t:"Grand — 6½, maison moyenne (7+ pièces)",i:"🏘"},
+    {t:"Très grand — grande maison, 8½ et +",i:"🏰"},
+    {t:"Autre (préciser — ex: nb salles à manger, salles de bain, bureaux)",i:"✏️",free:true}
+  ] },
+  { key:'moment', bot:"Quand souhaiteriez-vous avoir ce grand ménage ?", opts:[
+    {t:"Cette semaine (urgence) ⚡",i:""},{t:"La semaine prochaine",i:""},{t:"Durant le mois",i:""},{t:"Prévoir à l'avance (préciser le mois)",i:"",free:true},{t:"À déterminer ensemble",i:""}
+  ] },
+  { key:'secteur', bot:"Dans quel secteur êtes-vous situé ?", opts:SECTEURS },
+  { key:'taches', bot:"Quelles seront les tâches ?", opts:[
+    {t:"Ménage complet (murs, moulures, intérieur d'armoires, intérieur d'électroménagers, textiles, vitres…) + service régulier (salon, chambre, cuisine, planchers…)",i:"✨"},
+    {t:"Tâches précises seulement (préciser)",i:"📝",free:true}
+  ] },
+  { key:'exterieur', bot:"Est-ce que l'**extérieur** est inclus ? (désherbage, pose de paillis, etc.)", opts:[
+    {t:"Oui, inclure l'extérieur",i:"🌿"},{t:"Non, intérieur seulement",i:"🏠"},{t:"À discuter",i:"💬"}
+  ] },
+  { key:'prenom', bot:"Quel est votre **prénom et nom complet** ?", opts:null, free:true },
+  { key:'telephone', bot:"Quel est votre **numéro de téléphone** ?", opts:null, free:true },
+  { key:'courriel', bot:"Et votre **adresse courriel** ?", opts:null, free:true }
+];
+
+// Parcours simple — autres services
+const flowSimple = [
+  { key:null, bot:"Parfait ! Recueillons vos coordonnées pour votre demande de soumission gratuite. 😊", opts:[{t:"Continuer →",i:""}] },
+  { key:'secteur', bot:"Dans quel secteur êtes-vous situé ?", opts:SECTEURS },
+  { key:'projet', bot:"Décrivez brièvement votre **besoin / projet** :", opts:null, free:true },
+  { key:'adresse', bot:"Quelle est l'**adresse du lieu** ?", opts:null, free:true },
+  { key:'prenom', bot:"Quel est votre **prénom et nom complet** ?", opts:null, free:true },
+  { key:'telephone', bot:"Quel est votre **numéro de téléphone** ?", opts:null, free:true },
+  { key:'courriel', bot:"Et votre **adresse courriel** ?", opts:null, free:true }
+];
+
+let steps=[], step=0, ans={}, busy=false;
+const chatBody=document.getElementById('chatBody');
+const progFill=document.getElementById('progFill');
+const chatInput=document.getElementById('chatInput');
+const chatSend=document.getElementById('chatSend');
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+
+function buildSteps(){
+  const s=ans.service||'';
+  if(s.includes('résidentiel')&&!s.includes('Grand')) steps=[...flowStart,...flowResidentiel];
+  else if(s.includes('commercial')&&!s.includes('Grand')) steps=[...flowStart,...flowCommercial];
+  else if(s.includes('Grand')) steps=[...flowStart,...flowGrand];
+  else if(s) steps=[...flowStart,...flowSimple];
+  else steps=[...flowStart];
+}
+const pct=()=>steps.length>1?Math.round((step/steps.length)*100)+'%':'5%';
+function fmt(t){return t.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>').replace(/\{(\w+)\}/g,(_,k)=>ans[k]||'');}
+function addBot(t){const d=document.createElement('div');d.className='msg bot';d.innerHTML=`<div class="msg-av">🧹</div><div class="bubble">${fmt(t)}</div>`;chatBody.appendChild(d);chatBody.scrollTop=chatBody.scrollHeight;}
+function addUsr(t){const d=document.createElement('div');d.className='msg usr';d.innerHTML=`<div class="bubble">${t}</div>`;chatBody.appendChild(d);chatBody.scrollTop=chatBody.scrollHeight;}
+function showTyping(){const d=document.createElement('div');d.className='msg bot';d.id='typing';d.innerHTML=`<div class="msg-av">🧹</div><div class="bubble"><div class="typing-wrap"><span></span><span></span><span></span></div></div>`;chatBody.appendChild(d);chatBody.scrollTop=chatBody.scrollHeight;}
+function hideTyping(){const e=document.getElementById('typing');if(e)e.remove();}
+function disableOpts(){document.querySelectorAll('.opt').forEach(b=>b.disabled=true);}
+function showOpts(opts){const w=document.createElement('div');w.className='opts';opts.forEach(o=>{const b=document.createElement('button');b.className='opt';b.innerHTML=`<span class="oi">${o.i||'▸'}</span><span>${o.t}</span>`;b.onclick=()=>pickOpt(o);w.appendChild(b);});chatBody.appendChild(w);chatBody.scrollTop=chatBody.scrollHeight;}
+
+async function pickOpt(o){
+  disableOpts(); addUsr(o.t);
+  const cur=steps[step];
+  // free-text option: ask for precision
+  if(o.free){
+    if(cur.key2){ ans[cur.key2]=o.v||o.t; }
+    else if(cur.key){ ans[cur.key]=o.t; }
+    // prompt precision inline
+    ans._awaitPrecision = cur.key||cur.key2;
+    step++; progFill.style.width=pct();
+    busy=true; showTyping(); await wait(600); hideTyping();
+    addBot("Parfait, pouvez-vous préciser un peu plus ? ✏️");
+    chatInput.disabled=false; chatInput.placeholder='Précisez ici…'; chatInput.focus(); busy=false;
+    ans._precisionMode=true;
+    return;
+  }
+  if(cur.key2){ ans[cur.key2]=o.v||o.t; buildSteps(); }
+  else if(cur.key){ ans[cur.key]=o.t; }
+  step++; progFill.style.width=pct(); await advance();
+}
+async function pickFree(v){
+  if(ans._precisionMode){
+    const k=ans._awaitPrecision;
+    if(k&&ans[k]) ans[k]=ans[k]+' — '+v; else if(k) ans[k]=v;
+    ans._precisionMode=false; ans._awaitPrecision=null;
+    addUsr(v); chatInput.value=''; await advance(); return;
+  }
+  const cur=steps[step];
+  if(cur.key)ans[cur.key]=v;
+  addUsr(v); chatInput.value=''; step++; progFill.style.width=pct(); await advance();
+}
+
+async function advance(){
+  busy=true; showTyping(); await wait(750+Math.random()*300); hideTyping();
+  if(step>=steps.length){ await finish(); busy=false; return; }
+  const s=steps[step]; addBot(s.bot);
+  if(s.opts){ await wait(170); showOpts(s.opts); chatInput.disabled=true; chatInput.placeholder='Choisissez une option ci-dessus…'; }
+  else { chatInput.disabled=false; chatInput.placeholder='Tapez votre réponse…'; chatInput.focus(); }
+  busy=false;
+}
+
+async function finish(){
+  saveLead({...ans});
+  addBot(`Merci **${ans.prenom||''}** ! Voici le résumé de votre demande :`);
+  await wait(300);
+  const card=document.createElement('div');card.className='sum-card';
+  let rows=`<div class="sum-row"><span class="sum-lbl">Service :</span> ${esc(ans.service)}</div>`;
+  const map=[['Type',ans.option],['Espace',ans.espace],['Quand',ans.moment],['Secteur',ans.secteur],['Tâches',ans.taches],['Extérieur',ans.exterieur],['Entreprise',ans.entreprise],['Responsable',ans.responsable],['Adresse',ans.adresse],['Projet',ans.projet],['Téléphone',ans.telephone],['Courriel',ans.courriel]];
+  map.forEach(([k,v])=>{ if(v)rows+=`<div class="sum-row"><span class="sum-lbl">${k} :</span> ${esc(v)}</div>`; });
+  card.innerHTML=`<h4>📋 Votre demande de soumission</h4>${rows}`;
+  chatBody.appendChild(card);chatBody.scrollTop=chatBody.scrollHeight;
+  const nb=document.createElement('div');nb.className='notif-row';
+  nb.innerHTML=`<span class="badge pending" id="b-email">📧 Email en cours…</span><span class="badge pending" id="b-sms">📱 SMS en cours…</span>`;
+  chatBody.appendChild(nb);chatBody.scrollTop=chatBody.scrollHeight;
+  sendEmail(ans).then(()=>{const b=document.getElementById('b-email');if(b){b.textContent='📧 Email envoyé ✓';b.className='badge ok';}}).catch(()=>{const b=document.getElementById('b-email');if(b){b.textContent='📧 Email (config. requise)';b.className='badge err';}});
+  sendSMS(ans).then(()=>{const b=document.getElementById('b-sms');if(b){b.textContent='📱 SMS envoyé ✓';b.className='badge ok';}}).catch(()=>{const b=document.getElementById('b-sms');if(b){b.textContent='📱 SMS (config. requise)';b.className='badge err';}});
+  await wait(600);
+  addBot(`L'agente aux soumissions vous contactera dans les plus brefs délais au ${ans.telephone}.\n\nMerci d'avoir choisi **Ménage Maria inc.** ✨`);
+  await wait(500);
+  const cta=document.createElement('button');cta.className='cta-chat';
+  cta.textContent='📞 Nous joindre : 418-262-7166';
+  cta.onclick=()=>window.open('tel:4182627166');
+  chatBody.appendChild(cta);chatBody.scrollTop=chatBody.scrollHeight;
+  progFill.style.width='100%';chatInput.disabled=true;chatInput.placeholder='Demande envoyée — merci !';
+}
+
+async function initChat(){buildSteps();showTyping();await wait(700);hideTyping();addBot(steps[0].bot);await wait(200);showOpts(steps[0].opts);chatInput.disabled=true;}
+chatSend.addEventListener('click',()=>{const v=chatInput.value.trim();if(!v||busy||chatInput.disabled)return;pickFree(v);});
+chatInput.addEventListener('keydown',e=>{if(e.key!=='Enter')return;const v=chatInput.value.trim();if(!v||busy||chatInput.disabled)return;pickFree(v);});
+function showPage(id,e){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');if(e&&e.target)e.target.classList.add('active');if(id==='dashboard')renderDash();}
+loadConfig();renderDash();initChat();
+</script>
+</body>
+</html>
